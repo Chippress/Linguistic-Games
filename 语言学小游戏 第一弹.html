@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语言学小游戏 第一弹</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .page {
+            display: none;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #3498db, blue, blue);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+            margin-top: 30px;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: #3498db;
+            margin-top: 25px;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .intro {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        button {
+            background: linear-gradient(to right, #ddd, #ddd);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            margin: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .option-btn {
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            background-color: silver;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #333;
+        }
+        
+        .option-btn:hover {
+            border-color: yellow;
+            background-color: #e8f4fc;
+        }
+        
+        .option-btn.selected-on {
+            background-color: #2ecc71;
+            color: green;
+            border-color: #27ae60;
+        }
+        
+        .option-btn.selected-kun {
+            background-color: #3498db;
+            color: blue;
+            border-color: #2980b9;
+        }
+        
+        .option-btn.selected-wrong {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+            opacity: 0.7;
+        }
+        
+        .question {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 4px solid #9b59b6;
+            font-size: 1.2rem;
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            flex-grow: 1;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 0 20px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, yellow, #2ecc71);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .explanation {
+            background-color: #e8f4fc;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        
+        .explanation.active {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+        
+        .section-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .input-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        input[type="number"] {
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            width: 200px;
+            text-align: center;
+            margin-right: 15px;
+        }
+        
+        .feedback {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d5edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .language-example {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 0 5px;
+            background-color: #f1f2f6;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .game-title {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, pink, pink, pink, pink, pink);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 5s infinite alternate;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+        }
+        
+        .counter {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .page {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            .options-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 欢迎页面 -->
+    <div id="welcome-page" class="page active">
+        <h1 class="game-title">语言学小游戏</h1>
+        <p class="subtitle"></p>
+        
+        <div class="button-container">
+            <button id="start-game">开始游戏</button>
+        </div>
+    </div>
+    
+    <!-- 第一节：神奇的"读写分离" -->
+    <div id="section1-intro" class="page">
+        <h2>第一节：神奇的"读写分离"</h2>
+        
+        <div class="intro">
+            <p>我们在高中做了很多“语言文字运用”题。“语言”和“文字”是不同的。语言只有发音，文字只有形状。人类是先产生语言，后产生文字的。</p>
+            <p>然而，日语一直只有语言，没能发明出文字。直到晋朝，日本才开始借用汉字；直到唐朝，才开始使用假名（“假”即“借”）。
+                因此日语具有“读写分离”的特殊现象。在日语中，同一个汉字往往有多种读音，分为两类：</p>
+            <ul>
+                <li><strong>音读</strong>：模仿汉字的汉语发音（如把“山”读作san）。</li>
+                <li><strong>训读</strong>：将日语固有词的发音套用给这一意义的汉字（如把“山”读作yama）</li>
+            </ul>
+            <br>
+            <p>下面我们来体会一下这个神奇的语言学现象！</p>
+        </div>
+        
+        <div class="button-container">
+            <button id="enter-section1">进入关卡</button>
+        </div>
+    </div>
+    
+    <!-- 关卡1-1：有几十种发音的多音字 -->
+    <div id="level1-1" class="page">
+        <h2>关卡1-1：有几十种发音的多音字</h2>
+        
+        <div class="progress-container">
+            <span>第一节：神奇的"读写分离"</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress1-1" style="width: 0%"></div>
+            </div>
+            <span>关卡1/3</span>
+        </div>
+        
+        <div class="question">
+            <p>猜猜以下哪些是日语汉字"生"的读音。点击你认为正确的，全选出即可过关。</p>
+            <p><small>按钮变绿表示音读，按钮变蓝表示训读</small></p>
+        </div>
+        
+        <div class="options-container" id="options1-1">
+            <!-- 选项将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="explanation" id="explanation1-1">
+            <h3></h3>
+            <p>没错！以上全是正确选项。其实，日语的“生”至少有<b>几十种</b>不同的读音！</p>
+            <a href="https://www.bilibili.com/video/BV1syYee2E2f" target="_blank">《日语「生」的几十种读法》bilibili</a>
+        </div>
+        
+        <div class="section-nav">
+            <button id="back-to-section1">返回</button>
+            <button id="next-level1-1" style="display: none;">下一关</button>
+        </div>
+    </div>
+    
+    <!-- 关卡1-2：音读1——少得可怜的音素 -->
+    <div id="level1-2" class="page">
+        <h2>关卡1-2：音读1——少得可怜的音素</h2>
+        
+        <div class="progress-container">
+            <span>第一节：神奇的"读写分离"</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress1-2" style="width: 0%"></div>
+            </div>
+            <span>关卡2/3</span>
+        </div>
+        
+        <div class="question">
+            <p>猜猜以下哪些字读作"kou"。点击你认为正确的，全选出即可过关。</p>
+            <p><small>提示："kou"是日语拼音（罗马音），也写作kō，是ko的长音，听起来像英式的call。</small></p>
+        </div>
+        
+        <div class="options-container" id="options1-2">
+            <!-- 选项将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="explanation" id="explanation1-2">
+            <h3>关卡通过！</h3>
+            <p>日语的音读借用了不同时期、不同地域的汉语发音，并且由于日语发音非常纯粹（日语音素少，或者说日本人能发出的音太少），许多不同的汉语发音在日语中合并了。</p>
+            <p>于是，同音异字的现象在日语中非常普遍，这也是日本人感到汉字太难而不愿学的原因之一。</p>
+        </div>
+        
+        <div class="section-nav">
+            <button id="back-to-level1-1">上一关</button>
+            <button id="next-level1-2" style="display: none;">下一关</button>
+        </div>
+    </div>
+    
+    <!-- 关卡1-3：音读2——我们只是汉字的搬运工 -->
+    <div id="level1-3" class="page">
+        <h2>关卡1-3：音读2——我们只是汉字的搬运工</h2>
+        
+        <div class="progress-container">
+            <span>第一节：神奇的"读写分离"</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress1-3" style="width: 0%"></div>
+            </div>
+            <span>关卡3/3</span>
+        </div>
+        
+        <div class="question">
+            <p id="question-text1-3">猜猜下列音读汉字词的日语发音。</p>
+            <p>当前进度: <span id="current-progress1-3">0</span>/7</p>
+        </div>
+        
+        <div class="options-container" id="options1-3">
+            <!-- 选项将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="feedback" id="feedback1-3"></div>
+        
+        <div class="explanation" id="explanation1-3" style="display: none;">
+            <h3>关卡通过！</h3>
+            <p>日语从汉语借用了大量的词汇，这些词汇被称为“汉字词”（固有词称为“和语词”，片假名书写的西方来词称为“外来词”）。</p>
+            <p>这些词虽然词形与汉语相同或相似，但发音已经适应了日语的音系。</p>
+            <p></p>
+        </div>
+        
+        <div class="section-nav">
+            <button id="back-to-level1-2">上一关</button>
+            <button id="next-level1-3" style="display: none;">进入第二节</button>
+        </div>
+    </div>
+    
+    <!-- 第二节：从语素到词汇 -->
+    <div id="section2-intro" class="page">
+        <h2>第二节：从语素到词汇</h2>
+        
+        <div class="intro">
+            <p>语素是语言中最小的意义单位。通过将不同的语素组合起来，我们可以创造出丰富的词汇。</p>
+            <p>这一节将带你探索语素组词的逻辑。</p>
+        </div>
+        
+        <div class="button-container">
+            <button id="enter-section2">进入关卡</button>
+        </div>
+    </div>
+    
+    <!-- 关卡2-1："拼好词" -->
+    <div id="level2-1" class="page">
+        <h2>关卡2-1："拼好词"</h2>
+        
+        <div class="progress-container">
+            <span>第二节：从语素到词汇</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress2-1" style="width: 0%"></div>
+            </div>
+            <span>关卡1/1</span>
+        </div>
+        
+        <div class="question">
+            <p id="question-text2-1">猜猜下列合成词的意思。</p>
+            <p>当前进度: <span id="current-progress2-1">0</span>/10</p>
+        </div>
+        
+        <div class="options-container" id="options2-1">
+            <!-- 选项将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="feedback" id="feedback2-1"></div>
+        
+        <div class="explanation" id="explanation2-1" style="display: none;">
+            <h3>关卡通过！</h3>
+            <p>语素组合成词的方式多种多样，不同的构词法有很多，如复合、派生、屈折等。组词的逻辑也多种多样，有的直截了当，有的则貌似牵强：</p>
+            <p>了解语素如何组合成词，不仅有助于学习新词汇，还能让我们理解语言的发展史、不同语言间的亲缘关系。</p>
+        </div>
+        
+        <div class="section-nav">
+            <button id="back-to-section2">返回</button>
+            <button id="next-level2-1" style="display: none;">进入第三节</button>
+        </div>
+    </div>
+    
+    <!-- 第三节：词形变化 -->
+    <div id="section3-intro" class="page">
+        <h2>第三节：词形变化</h2>
+        
+        <div class="intro">
+            <p>词形变化是许多语言的重要特征，通过改变词的形态来表达语法意义。
+            例如，英语的时态变化（walk → walked）、复数变化（cat → cats）。</p>
+            <p>作为中国人，我们的第一印象是：词形变化是没有必要的，而且很难学。但其实，拥有词形变化，才是人类自然语言千年以来的主流选择。
+                自然语言有3类：屈折语（如英、法、德、俄、西、意、拉丁，其中英语的屈折程度已经退化了）、黏着语（如日、韩、蒙、满、北欧）、分析语（也叫孤立语，只有汉语）。
+                <br>
+                从古至今，屈折语是绝对的主流。即使是汉语，在很多方言中，仍然可以听出词形的变化，只不过汉字是方块字，写的时候变形不了。
+                <br>
+                不过，屈折语主导的历史可能正在结束。事实上，英语、法语等语言的屈折程度（词形变化的复杂程度）越来越低，分析化程度越来越高。
+                比如法语曾经有几十种时态，现在只有15种；再比如英语有大量重复的变形（如有些过去式和过去分词都加ed）。
+                此外，数学语言、编程语言的发明，本身就是分析化的过程。
+                有了“=”，就不用区分equal to和equals to；用isPrime（判断质数的函数），就不用写arePrime。
+            </p>
+            <p>在这一节，你将探索屈折语中复杂的词形变化系统，体会复杂之美、严谨之美。</p>
+        </div>
+        
+        <div class="button-container">
+            <button id="enter-section3">进入关卡</button>
+        </div>
+    </div>
+    
+    <!-- 关卡3-1：屈折语 -->
+    <div id="level3-1" class="page">
+        <h2>关卡3-1：屈折语，宁就是排列组合带师？</h2>
+        
+        <div class="progress-container">
+            <span>第三节：词形变化</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress3-1" style="width: 0%"></div>
+            </div>
+            <span>关卡1/1</span>
+        </div>
+        
+        <div class="question">
+            <p>为什么"我用am你用are，is连着他她它"？为什么单三非要加s？这是因为，屈折语的底层逻辑，就是通过词形变化表达语法意义。</p>
+            <p>假设一门语言有3种人称（第一、第二、第三）、6种格（主格、宾格、与格、属格、夺格、呼格）、
+                3种性（阴性、阳性、中性）、2种数（单数、复数）、4种时（现在、过去、将来、过去将来）、4种态（一般、进行、完成、完成进行），
+                每一种组合都使用唯一的变形，且各种变形互不重复，那么在这门语言中，一个动词最多有多少种变形？</p>
+        </div>
+        
+        <div class="input-container">
+            <input type="number" id="answer3-1" placeholder="请输入数字">
+            <button id="submit3-1">提交答案</button>
+        </div>
+        
+        <div class="feedback" id="feedback3-1"></div>
+        
+        <div class="explanation" id="explanation3-1" style="display: none;">
+            <h3>关卡通过！</h3>
+            <p>解释：</p>
+            <ul>
+                <li>格：用于描述名词、代词等词类在句子中与动词、其他成分之间的语法关系，即“格关系”。
+                    通俗拉丁语有6种格的变形：主格、宾格、与格（在双宾语结构give a book to me中，book是宾格，a book是与格）、属格（即所有格，如the book of me）、夺格、呼格（呼唤某人）</li>
+                <li>性：法语有阴性、阳性的区别，如une etudiante americaine和un etudiant americain分别是“一个美国女学生”“一个美国男学生”，
+                    这两个短语由于“性”的不同，冠词、名词、形容词通通发生了变形，而在英语中就只有an American student。德语除了阴阳性，还有中性。
+                </li>
+                <li>时态：显然，题目中是英语的时态，而其中实用的并没有4*4=16种。可以查查
+                    法语、
+                    <a href="https://zhuanlan.zhihu.com/p/105032645" target="_blank">俄语</a>
+                    的时态，受点惊吓。</li>
+            </ul>
+            <p>小知识：动词的词形变化，也叫“变位”。</p>
+            <p>实际语言中通常不会有1000种变形如此复杂，因为许多语法范畴可能相互排斥或合并，但这个计算展示了屈折语理论上可能的复杂程度。</p>
+        </div>
+        
+        <div class="section-nav">
+            <button id="back-to-section3">返回</button>
+            <button id="next-level3-1" style="display: none;">完成游戏</button>
+        </div>
+    </div>
+    
+    <!-- 结束页 -->
+    <div id="end-page" class="page">
+        <h1>恭喜完成语言学小游戏！</h1>
+        
+        <div class="intro">
+            <p>“语言的边界就是思想的边界，语言的边界就是世界的边界。”希望这个游戏能激发你对语言学的兴趣，继续探索人类语言的奥秘！</p>
+            <p>以后可能推出更多哦~</p>
+            <p>by Chippress & DeepSeek 2026.2.4.</p>
+            <p>revised on 2026.3.1.</p>
+        </div>
+        
+        <div class="button-container">
+            <button id="restart-game">重新开始游戏</button>
+        </div>
+    </div>
+
+    <script>
+        // 游戏数据
+        const gameData = {
+            // 关卡1-1数据：日语汉字"生"的读音
+            level1_1: {
+                question: "猜猜以下哪些是日语汉字\"生\"的读音。点击你认为正确的，全选出即可过关。",
+                options: [
+                    { text: "sei", type: "on", example: "学生(がくせい)" }, 
+                    { text: "shō", type: "on", example: "一生\n(いっしょう)" },
+                    { text: "i-kiru", type: "kun", example: "生きる\n(いきる)" },
+                    { text: "nama", type: "kun", example: "生卵\n(なまたまご)" },
+                    { text: "Yuzuru\nHa-nyu", type: "kun", example: "羽生\n（はにゅう）" },
+                    { text: "ki-", type: "kun", example: "生粋\n(きっすい)" },
+                    { text: "ha-eru", type: "kun", example: "生える\n(はえる)" },
+                    { text: "fu-ru", type: "kun", example: "生る\n(ふる)" },
+                    { text: "na-su", type: "kun", example: "生す\n(なす)" },
+                    { text: "jō", type: "on", example: "誕生\n(たんじょう)" }
+                ]
+            },
+            
+            // 关卡1-2数据：读作"kou"的汉字
+            level1_2: {
+                question: "猜猜以下哪些字读作\"kou\"(像英式的call)。点击你认为正确的，全选出即可过关。",
+                options: [
+                    { text: "高", correct: true },
+                    { text: "校", correct: true },
+                    { text: "工", correct: true },
+                    { text: "好", correct: true },
+                    //{ text: "口", correct: false },
+                    { text: "行", correct: true },
+                    { text: "光", correct: true },
+                    { text: "考", correct: true },
+                    { text: "幸", correct: true },
+                    { text: "港", correct: true }
+                ]
+            },
+            
+            // 关卡1-3数据：音读汉字词的发音
+            level1_3: {
+                questions: [
+                    { word: "電話", correct: "denwa", options: ["denwa", "tenha", "denka"] },
+                    { word: "学生", correct: "gakusei", options: ["gakusei", "gakusai", "gakuse"] },
+                    { word: "図書館", correct: "toshokan", options: ["toshokan", "zushokan", "toshohan"] },
+                    { word: "財経", correct: "zaikei", options: ["saijin", "zaikei", "saikei"] },
+                    { word: "政法", correct: "seihou", options: ["seiha", "seihou", "seifa"] },
+                    { word: "文化", correct: "bunka", options: ["bunka", "bunga", "munka"] },
+                    { word: "社会", correct: "shakai", options: ["sakei", "shahei", "shakai"] }
+                ],
+                currentQuestion: 0,
+                answeredCorrectly: false
+            },
+            
+            // 关卡2-1数据：合成词的意思
+            level2_1: {
+                questions: [
+                    { 
+                        word: "[德]Schmetterling", 
+                        morphemes: "Schmettern(砰砰声) + Ling(小东西)",
+                        correct: "蝴蝶", 
+                        options: ["蝴蝶", "小鸟", "蜜蜂"] 
+                    },
+                    { 
+                        word: "[日]手紙", 
+                        morphemes: "手 + 纸",
+                        correct: "信件", 
+                        options: ["信件", "卫生纸", "手帕"] 
+                    },
+                    { 
+                        word: "[英]butterfly", 
+                        morphemes: "butter + fly",
+                        correct: "蝴蝶", 
+                        options: ["蝴蝶", "苍蝇", "飞蛾"] 
+                    },
+                    { 
+                        word: "[意]lavapiatti", 
+                        morphemes: "lava(洗) + piatti(盘子)",
+                        correct: "洗碗机", 
+                        options: ["洗碗机", "洗衣机", "洗手池"] 
+                    },
+                    { 
+                        word: "[德]Krankenhaus", 
+                        morphemes: "Kranken(病人) + Hous(house)",
+                        correct: "医院", 
+                        options: ["病房", "医院", "邮局"] 
+                    },
+                    { 
+                        word: "[英]reverse", 
+                        morphemes: "re-(向后) + verse(转)",
+                        correct: "重返", 
+                        options: ["倒立", "重返", "回顾"] 
+                    },
+                    { 
+                        word: "[日]帝王切開", 
+                        morphemes: "这里的帝王特指凯撒",
+                        correct: "剖腹产", 
+                        options: ["宝剑", "割让", "剖腹产"] 
+                    },
+                    { 
+                        word: "[日]ひまわり", 
+                        morphemes: "ひ(太阳) + まわり(转)",
+                        correct: "向日葵", 
+                        options: ["地球", "宇宙", "向日葵"] 
+                    },
+                    { 
+                        word: "[韩]지금（只今）", 
+                        morphemes: "지(只) + 지(今)",
+                        correct: "现在", 
+                        options: ["仅仅", "现在", "仅现在"] 
+                    },
+                    { 
+                        word: "[日]振り払う", 
+                        morphemes: "振る+払う（払=拂）",
+                        correct: "甩开", 
+                        options: ["振作", "甩开", "振幅"] 
+                    }
+                ],
+                currentQuestion: 0,
+                answeredCorrectly: false
+            }
+        };
+
+        // 页面切换功能
+        const pages = {
+            'welcome-page': document.getElementById('welcome-page'),
+            'section1-intro': document.getElementById('section1-intro'),
+            'level1-1': document.getElementById('level1-1'),
+            'level1-2': document.getElementById('level1-2'),
+            'level1-3': document.getElementById('level1-3'),
+            'section2-intro': document.getElementById('section2-intro'),
+            'level2-1': document.getElementById('level2-1'),
+            'section3-intro': document.getElementById('section3-intro'),
+            'level3-1': document.getElementById('level3-1'),
+            'end-page': document.getElementById('end-page')
+        };
+
+        // 显示指定页面，隐藏其他页面
+        function showPage(pageId) {
+            // 隐藏所有页面
+            Object.values(pages).forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            pages[pageId].classList.add('active');
+            
+            // 如果显示的是关卡1-1，初始化该关卡
+            if (pageId === 'level1-1') {
+                initLevel1_1();
+            }
+            // 如果显示的是关卡1-2，初始化该关卡
+            else if (pageId === 'level1-2') {
+                initLevel1_2();
+            }
+            // 如果显示的是关卡1-3，初始化该关卡
+            else if (pageId === 'level1-3') {
+                initLevel1_3();
+            }
+            // 如果显示的是关卡2-1，初始化该关卡
+            else if (pageId === 'level2-1') {
+                initLevel2_1();
+            }
+        }
+
+        // 初始化关卡1-1
+        function initLevel1_1() {
+            const optionsContainer = document.getElementById('options1-1');
+            optionsContainer.innerHTML = '';
+            
+            // 重置进度条
+            document.getElementById('progress1-1').style.width = '0%';
+            
+            // 隐藏下一关按钮和解析
+            document.getElementById('next-level1-1').style.display = 'none';
+            document.getElementById('explanation1-1').classList.remove('active');
+            
+            // 创建选项按钮
+            gameData.level1_1.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.text;
+                button.dataset.index = index;
+                button.dataset.type = option.type;
+                button.dataset.example = option.example;
+                
+                button.addEventListener('click', function() {
+                    // 如果按钮已经被点击过，则不执行操作
+                    if (this.classList.contains('selected-on') || this.classList.contains('selected-kun')) {
+                        return;
+                    }
+                    
+                    // 根据读音类型设置按钮样式
+                    if (option.type === 'on') {
+                        this.classList.add('selected-on');
+                        this.textContent = option.example;
+                    } else {
+                        this.classList.add('selected-kun');
+                        this.textContent = option.example;
+                    }
+                    
+                    // 更新进度条
+                    const selectedButtons = document.querySelectorAll('#options1-1 .option-btn.selected-on, #options1-1 .option-btn.selected-kun').length;
+                    const progress = (selectedButtons / gameData.level1_1.options.length) * 100;
+                    document.getElementById('progress1-1').style.width = `${progress}%`;
+                    
+                    // 检查是否所有按钮都被点击
+                    if (selectedButtons === gameData.level1_1.options.length) {
+                        // 显示解析和下一关按钮
+                        document.getElementById('explanation1-1').classList.add('active');
+                        document.getElementById('next-level1-1').style.display = 'block';
+                    }
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // 初始化关卡1-2
+        function initLevel1_2() {
+            const optionsContainer = document.getElementById('options1-2');
+            optionsContainer.innerHTML = '';
+            
+            // 重置进度条
+            document.getElementById('progress1-2').style.width = '0%';
+            
+            // 隐藏下一关按钮和解析
+            document.getElementById('next-level1-2').style.display = 'none';
+            document.getElementById('explanation1-2').classList.remove('active');
+            
+            // 创建选项按钮
+            gameData.level1_2.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.text;
+                button.dataset.index = index;
+                button.dataset.correct = option.correct;
+                
+                button.addEventListener('click', function() {
+                    // 如果按钮已经被点击过，则不执行操作
+                    if (this.classList.contains('selected-on') || this.classList.contains('selected-wrong')) {
+                        return;
+                    }
+                    
+                    // 根据是否正确设置按钮样式
+                    if (option.correct) {
+                        this.classList.add('selected-on');
+                    } else {
+                        this.classList.add('selected-wrong');
+                    }
+                    
+                    // 更新进度条
+                    const selectedButtons = document.querySelectorAll('#options1-2 .option-btn.selected-on').length;
+                    const totalCorrect = gameData.level1_2.options.filter(opt => opt.correct).length;
+                    const progress = (selectedButtons / totalCorrect) * 100;
+                    document.getElementById('progress1-2').style.width = `${progress}%`;
+                    
+                    // 检查是否所有正确的按钮都被点击
+                    if (selectedButtons === totalCorrect) {
+                        // 显示解析和下一关按钮
+                        document.getElementById('explanation1-2').classList.add('active');
+                        document.getElementById('next-level1-2').style.display = 'block';
+                    }
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // 初始化关卡1-3
+        function initLevel1_3() {
+            const optionsContainer = document.getElementById('options1-3');
+            const questionText = document.getElementById('question-text1-3');
+            const currentProgress = document.getElementById('current-progress1-3');
+            const feedback = document.getElementById('feedback1-3');
+            const explanation = document.getElementById('explanation1-3');
+            const nextButton = document.getElementById('next-level1-3');
+            
+            // 重置状态
+            gameData.level1_3.currentQuestion = 0;
+            gameData.level1_3.answeredCorrectly = false;
+            optionsContainer.innerHTML = '';
+            feedback.className = 'feedback';
+            feedback.style.display = 'none';
+            explanation.style.display = 'none';
+            nextButton.style.display = 'none';
+            
+            // 重置进度条
+            document.getElementById('progress1-3').style.width = '0%';
+            currentProgress.textContent = '0';
+            
+            // 显示第一个问题
+            showQuestion1_3();
+        }
+
+        // 显示关卡1-3的问题
+        function showQuestion1_3() {
+            const currentIndex = gameData.level1_3.currentQuestion;
+            const question = gameData.level1_3.questions[currentIndex];
+            const optionsContainer = document.getElementById('options1-3');
+            const questionText = document.getElementById('question-text1-3');
+            const currentProgress = document.getElementById('current-progress1-3');
+            const feedback = document.getElementById('feedback1-3');
+            
+            // 重置当前问题的状态
+            gameData.level1_3.answeredCorrectly = false;
+            
+            // 更新问题文本
+            questionText.textContent = `猜猜"${question.word}"的日语发音。`;
+            currentProgress.textContent = currentIndex + 1;
+            
+            // 更新进度条
+            const progress = ((currentIndex + 1) / gameData.level1_3.questions.length) * 100;
+            document.getElementById('progress1-3').style.width = `${progress}%`;
+            
+            // 清空选项容器
+            optionsContainer.innerHTML = '';
+            
+            // 隐藏反馈
+            feedback.style.display = 'none';
+            
+            // 创建选项按钮
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                
+                button.addEventListener('click', function() {
+                    // 如果已经正确回答了当前问题，不再处理
+                    if (gameData.level1_3.answeredCorrectly) {
+                        return;
+                    }
+                    
+                    // 检查答案
+                    if (option === question.correct) {
+                        // 标记当前问题已正确回答
+                        gameData.level1_3.answeredCorrectly = true;
+                        
+                        // 将所有按钮重置为默认状态，然后标记正确的按钮
+                        document.querySelectorAll('#options1-3 .option-btn').forEach(btn => {
+                            btn.classList.remove('selected-on', 'selected-wrong');
+                        });
+                        this.classList.add('selected-on');
+                        
+                        feedback.textContent = "正确！";
+                        feedback.className = 'feedback correct';
+                        feedback.style.display = 'block';
+                        
+                        // 延迟后显示下一个问题或完成关卡
+                        setTimeout(() => {
+                            gameData.level1_3.currentQuestion++;
+                            
+                            if (gameData.level1_3.currentQuestion < gameData.level1_3.questions.length) {
+                                showQuestion1_3();
+                            } else {
+                                // 完成所有问题
+                                document.getElementById('explanation1-3').style.display = 'block';
+                                document.getElementById('next-level1-3').style.display = 'block';
+                            }
+                        }, 1000);
+                    } else {
+                        // 标记错误选项
+                        this.classList.add('selected-wrong');
+                        feedback.textContent = "不正确，请再试一次。";
+                        feedback.className = 'feedback incorrect';
+                        feedback.style.display = 'block';
+                        
+                        // 1秒后清除错误反馈，让用户可以继续尝试
+                        setTimeout(() => {
+                            feedback.style.display = 'none';
+                        }, 1000);
+                    }
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // 初始化关卡2-1
+        function initLevel2_1() {
+            const optionsContainer = document.getElementById('options2-1');
+            const questionText = document.getElementById('question-text2-1');
+            const currentProgress = document.getElementById('current-progress2-1');
+            const feedback = document.getElementById('feedback2-1');
+            const explanation = document.getElementById('explanation2-1');
+            const nextButton = document.getElementById('next-level2-1');
+            
+            // 重置状态
+            gameData.level2_1.currentQuestion = 0;
+            gameData.level2_1.answeredCorrectly = false;
+            optionsContainer.innerHTML = '';
+            feedback.className = 'feedback';
+            feedback.style.display = 'none';
+            explanation.style.display = 'none';
+            nextButton.style.display = 'none';
+            
+            // 重置进度条
+            document.getElementById('progress2-1').style.width = '0%';
+            currentProgress.textContent = '0';
+            
+            // 显示第一个问题
+            showQuestion2_1();
+        }
+
+        // 显示关卡2-1的问题
+        function showQuestion2_1() {
+            const currentIndex = gameData.level2_1.currentQuestion;
+            const question = gameData.level2_1.questions[currentIndex];
+            const optionsContainer = document.getElementById('options2-1');
+            const questionText = document.getElementById('question-text2-1');
+            const currentProgress = document.getElementById('current-progress2-1');
+            const feedback = document.getElementById('feedback2-1');
+            
+            // 重置当前问题的状态
+            gameData.level2_1.answeredCorrectly = false;
+            
+            // 更新问题文本
+            questionText.innerHTML = `猜猜"<span class="language-example">${question.word}</span>"的意思。<br><small>语素分析: ${question.morphemes}</small>`;
+            currentProgress.textContent = currentIndex + 1;
+            
+            // 更新进度条
+            const progress = ((currentIndex + 1) / gameData.level2_1.questions.length) * 100;
+            document.getElementById('progress2-1').style.width = `${progress}%`;
+            
+            // 清空选项容器
+            optionsContainer.innerHTML = '';
+            
+            // 隐藏反馈
+            feedback.style.display = 'none';
+            
+            // 创建选项按钮
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                
+                button.addEventListener('click', function() {
+                    // 如果已经正确回答了当前问题，不再处理
+                    if (gameData.level2_1.answeredCorrectly) {
+                        return;
+                    }
+                    
+                    // 检查答案
+                    if (option === question.correct) {
+                        // 标记当前问题已正确回答
+                        gameData.level2_1.answeredCorrectly = true;
+                        
+                        // 将所有按钮重置为默认状态，然后标记正确的按钮
+                        document.querySelectorAll('#options2-1 .option-btn').forEach(btn => {
+                            btn.classList.remove('selected-on', 'selected-wrong');
+                        });
+                        this.classList.add('selected-on');
+                        
+                        feedback.textContent = "正确！";
+                        feedback.className = 'feedback correct';
+                        feedback.style.display = 'block';
+                        
+                        // 延迟后显示下一个问题或完成关卡
+                        setTimeout(() => {
+                            gameData.level2_1.currentQuestion++;
+                            
+                            if (gameData.level2_1.currentQuestion < gameData.level2_1.questions.length) {
+                                showQuestion2_1();
+                            } else {
+                                // 完成所有问题
+                                document.getElementById('explanation2-1').style.display = 'block';
+                                document.getElementById('next-level2-1').style.display = 'block';
+                            }
+                        }, 1000);
+                    } else {
+                        // 标记错误选项
+                        this.classList.add('selected-wrong');
+                        feedback.textContent = "不正确，请再试一次。";
+                        feedback.className = 'feedback incorrect';
+                        feedback.style.display = 'block';
+                        
+                        // 1秒后清除错误反馈，让用户可以继续尝试
+                        setTimeout(() => {
+                            feedback.style.display = 'none';
+                            this.classList.remove('selected-wrong'); // 移除错误标记，让用户可以再次尝试
+                        }, 1000);
+                    }
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // 事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            // 开始游戏按钮
+            document.getElementById('start-game').addEventListener('click', function() {
+                showPage('section1-intro');
+            });
+            
+            // 进入第一节
+            document.getElementById('enter-section1').addEventListener('click', function() {
+                showPage('level1-1');
+            });
+            
+            // 关卡1-1下一关
+            document.getElementById('next-level1-1').addEventListener('click', function() {
+                showPage('level1-2');
+            });
+            
+            // 关卡1-2返回
+            document.getElementById('back-to-level1-1').addEventListener('click', function() {
+                showPage('level1-1');
+            });
+            
+            // 关卡1-2下一关
+            document.getElementById('next-level1-2').addEventListener('click', function() {
+                showPage('level1-3');
+            });
+            
+            // 关卡1-3返回
+            document.getElementById('back-to-level1-2').addEventListener('click', function() {
+                showPage('level1-2');
+            });
+            
+            // 关卡1-3进入第二节
+            document.getElementById('next-level1-3').addEventListener('click', function() {
+                showPage('section2-intro');
+            });
+            
+            // 进入第二节
+            document.getElementById('enter-section2').addEventListener('click', function() {
+                showPage('level2-1');
+            });
+            
+            // 关卡2-1返回
+            document.getElementById('back-to-section2').addEventListener('click', function() {
+                showPage('section2-intro');
+            });
+            
+            // 关卡2-1进入第三节
+            document.getElementById('next-level2-1').addEventListener('click', function() {
+                showPage('section3-intro');
+            });
+            
+            // 进入第三节
+            document.getElementById('enter-section3').addEventListener('click', function() {
+                showPage('level3-1');
+            });
+            
+            // 关卡3-1返回
+            document.getElementById('back-to-section3').addEventListener('click', function() {
+                showPage('section3-intro');
+            });
+            
+            // 关卡3-1提交答案
+            document.getElementById('submit3-1').addEventListener('click', function() {
+                const answerInput = document.getElementById('answer3-1');
+                const answer = parseInt(answerInput.value);
+                const feedback = document.getElementById('feedback3-1');
+                const explanation = document.getElementById('explanation3-1');
+                const nextButton = document.getElementById('next-level3-1');
+                
+                if (isNaN(answer)) {
+                    feedback.textContent = "请输入一个有效的数字！";
+                    feedback.className = 'feedback incorrect';
+                    feedback.style.display = 'block';
+                    return;
+                }
+                
+                // 正确答案是1728
+                const correctAnswer = 3 * 6 * 3 * 2 * 4 * 4; // 1728
+                
+                if (answer === correctAnswer) {
+                    feedback.textContent = "正确！";
+                    feedback.className = 'feedback correct';
+                    feedback.style.display = 'block';
+                    
+                    // 显示解析和下一关按钮
+                    explanation.style.display = 'block';
+                    nextButton.style.display = 'block';
+                    
+                    // 更新进度条
+                    document.getElementById('progress3-1').style.width = '100%';
+                } else {
+                    feedback.textContent = "不正确，请再试一次。提示：乘法原理";
+                    feedback.className = 'feedback incorrect';
+                    feedback.style.display = 'block';
+                }
+            });
+            
+            // 关卡3-1完成游戏
+            document.getElementById('next-level3-1').addEventListener('click', function() {
+                showPage('end-page');
+            });
+            
+            // 重新开始游戏
+            document.getElementById('restart-game').addEventListener('click', function() {
+                showPage('welcome-page');
+            });
+        });
+    </script>
+</body>
+</html>
